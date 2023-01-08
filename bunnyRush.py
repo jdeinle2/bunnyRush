@@ -1,4 +1,4 @@
-# Write your code here :-)
+#this is JakeTheHolt
 TILE_SIZE = 64
 WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
