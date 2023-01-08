@@ -1,4 +1,4 @@
-#this is JakeTheHolt
+#this is JakeTheHolt - nonoNO this is JUSTIN!
 TILE_SIZE = 64
 WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
