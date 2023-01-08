@@ -3,7 +3,7 @@ TILE_SIZE = 64
 WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
 
-tiles = ['empty', 'wall', 'goal', 'door', 'key']
+tiles = ['path', 'wall', 'goal', 'door', 'key', 'blah']
 unlock = 0
 
 maze = [
@@ -45,7 +45,7 @@ def on_key_down(key):
     if key == keys.RIGHT:
         column = column + 1
     tile = tiles[maze[row][column]]
-    if tile == 'empty':
+    if tile == 'path':
         x = column * TILE_SIZE
         y = row * TILE_SIZE
         animate(player, duration=0.1, pos=(x, y))
@@ -55,10 +55,10 @@ def on_key_down(key):
         exit()
     elif tile == 'key':
         unlock = unlock + 1
-        maze[row][column] = 0 # 0 is 'empty' tile
+        maze[row][column] = 0 # 0 is 'path' tile
     elif tile == 'door' and unlock > 0:
         unlock = unlock - 1
-        maze[row][column] = 0 # 0 is 'empty' tile
+        maze[row][column] = 0 # 0 is 'path' tile
 
     # enemy movement
     row    = int(enemy.y / TILE_SIZE)
