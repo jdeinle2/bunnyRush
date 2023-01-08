@@ -28,6 +28,8 @@ def draw():
             x = column * TILE_SIZE
             y = row * TILE_SIZE
             tile = tiles[maze[row][column]]
+            if tile!='path':
+                screen.blit('path', (x, y))
             screen.blit(tile, (x, y))
     player.draw()
     enemy.draw()
