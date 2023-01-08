@@ -61,10 +61,10 @@ def on_key_down(key):
         player.image = 'player'
     if key == keys.LEFT:
         column = column - 1
-        player.image = 'player'
+        player.image = 'playerleft'
     if key == keys.RIGHT:
         column = column + 1
-        player.image = 'wall'
+        player.image = 'player'
     tile = tiles[maze[LEVEL][row][column]]
     if tile != 'wall':
         x = column * TILE_SIZE
