@@ -2,9 +2,11 @@
 bunnyRush Math Maze!
 
 1. Download Mu to code in pyGameZero (https://codewith.mu/en/download)
-2. Download GIMP to create new 64x64 tiles (https://www.gimp.org/downloads/)
-3. Maze tuturial and other pyGameZero info (https://electronstudio.github.io/pygame-zero-book/chapters/maze.html)
-4. Download GitHub desktop (https://desktop.github.com)
+2. Download python for your OS (python.org)
+3. Download PyGameZero: pip install pgzero
+4. Download GIMP to create new 64x64 tiles (https://www.gimp.org/downloads/)
+5. Maze tuturial and other pyGameZero info (https://electronstudio.github.io/pygame-zero-book/chapters/maze.html)
+6. Download GitHub desktop (https://desktop.github.com)
 
 Load game in Mu and run!
 
