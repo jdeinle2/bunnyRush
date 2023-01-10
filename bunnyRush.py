@@ -66,7 +66,7 @@ def on_key_down(key):
         column = column + 1
         player.image = 'player'
     tile = tiles[maze[LEVEL][row][column]]
-    if tile != 'wall':
+    if tile != 'wall' and tile != 'door':
         x = column * TILE_SIZE
         y = row * TILE_SIZE
         animate(player, duration=0.1, pos=(x, y))
