@@ -1,4 +1,6 @@
 #this is JakeTheHolt - nonoNO this is JUSTIN!
+import time
+
 TILE_SIZE = 64
 WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
@@ -34,8 +36,8 @@ player = Actor("player", anchor=(0, 0), pos=(1 * TILE_SIZE, 1 * TILE_SIZE))
 enemy  = Actor("enemy",  anchor=(0, 0), pos=(3 * TILE_SIZE, 6 * TILE_SIZE))
 enemy.yv = -1
 sounds.welcome.play()
-music.play('background')
-music.set_volume(0.2)
+#music.play('background')
+#music.set_volume(0.2)
 
 def draw():
     global LEVEL
@@ -102,7 +104,7 @@ def on_key_down(key):
     else:
         enemy.yv = enemy.yv * -1
     if enemy.colliderect(player):
-        sounds.win.play()
-        sleep(2)
+        sounds.that_hurt.play()
+        time.sleep(1)
         print("You died")
         exit()
