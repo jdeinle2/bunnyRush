@@ -5,6 +5,7 @@ TILE_SIZE = 64
 WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
 LEVEL = 0
+MAX_LEVEL = 1
 
 tiles = ['path', 'wall', 'goal', 'door', 'key', 'blah']
 unlock = 0
@@ -56,6 +57,7 @@ def draw():
 def on_key_down(key):
     # player movement
     global LEVEL
+    global MAX_LEVEL
     row = int(player.y / TILE_SIZE)
     column = int(player.x / TILE_SIZE)
     if key == keys.UP:
@@ -81,7 +83,12 @@ def on_key_down(key):
         LEVEL = LEVEL + 1
         animate(player, duration=1.0, pos=(64, 64))
         unlock = 0
-        sounds.win.play()
+        if (LEVEL > MAX_LEVEL):
+            sounds.winner_chicken_dinner.play()
+            time.sleep(3)
+        else:
+            sounds.win.play()
+
         #exit()
     elif tile == 'key':
         unlock = unlock + 1
@@ -105,6 +112,6 @@ def on_key_down(key):
         enemy.yv = enemy.yv * -1
     if enemy.colliderect(player):
         sounds.that_hurt.play()
-        time.sleep(1)
+        time.sleep(2)
         print("You died")
         exit()
