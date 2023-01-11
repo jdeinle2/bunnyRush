@@ -76,13 +76,16 @@ def on_key_down(key):
         LEVEL = LEVEL + 1
         animate(player, duration=1.0, pos=(64, 64))
         unlock = 0
+        sounds.win.play()
         #exit()
     elif tile == 'key':
         unlock = unlock + 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
+        sounds.yum.play()
     elif tile == 'door' and unlock > 0:
         unlock = unlock - 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
+        sounds.thank_you.play()
 
     # enemy movement
     row    = int(enemy.y / TILE_SIZE)
@@ -96,5 +99,7 @@ def on_key_down(key):
     else:
         enemy.yv = enemy.yv * -1
     if enemy.colliderect(player):
+        sounds.win.play()
+        sleep(2)
         print("You died")
         exit()
