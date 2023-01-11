@@ -33,6 +33,7 @@ maze = [
 player = Actor("player", anchor=(0, 0), pos=(1 * TILE_SIZE, 1 * TILE_SIZE))
 enemy  = Actor("enemy",  anchor=(0, 0), pos=(3 * TILE_SIZE, 6 * TILE_SIZE))
 enemy.yv = -1
+sounds.welcome.play()
 
 def draw():
     global LEVEL
