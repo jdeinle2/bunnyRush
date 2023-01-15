@@ -5,9 +5,9 @@ TILE_SIZE = 64
 WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
 LEVEL = 0
-MAX_LEVEL = 1
+MAX_LEVEL = 3
 
-tiles = ['path', 'wall', 'goal', 'door', 'key', 'blah']
+tiles = ['path', 'wall', 'goal', 'door', 'key', 'obsidian', 'border', 'goal2']
 unlock = 0
 
 maze = [
@@ -30,6 +30,26 @@ maze = [
     [1, 1, 1, 0, 1, 0, 0, 1],
     [1, 1, 1, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1]
+],
+[
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 1, 2, 0, 1],
+    [1, 1, 1, 0, 1, 1, 3, 1],
+    [1, 1, 1, 0, 0, 0, 0, 1],
+    [1, 1, 1, 0, 1, 0, 0, 1],
+    [1, 1, 1, 0, 1, 0, 0, 1],
+    [1, 1, 0, 4, 1, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1]
+],
+[
+    [6, 6, 6, 6, 6, 6, 6, 6],
+    [6, 5, 5, 5, 5, 5, 5, 6],
+    [6, 5, 5, 5, 5, 5, 5, 6],
+    [6, 5, 5, 5, 5, 5, 5, 6],
+    [6, 5, 5, 5, 5, 5, 7, 6],
+    [6, 5, 5, 5, 5, 5, 5, 6],
+    [6, 5, 5, 5, 5, 5, 5, 6],
+    [6, 6, 6, 6, 6, 6, 6, 6]
 ]
 ]
 
@@ -48,8 +68,11 @@ def draw():
             x = column * TILE_SIZE
             y = row * TILE_SIZE
             tile = tiles[maze[LEVEL][row][column]]
-            if tile!='path':
+            if tile!='path' or 'goal2':
                 screen.blit('path', (x, y)) # This draws a path under everything not a path!
+            screen.blit(tile, (x, y)) # Draw the tile as the maze intended
+            if tile=='goal2':
+                screen.blit('obsidian', (x, y)) # This draws a path under everything not a path!
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
     player.draw()
     enemy.draw()
@@ -73,7 +96,7 @@ def on_key_down(key):
         column = column + 1
         player.image = 'player'
     tile = tiles[maze[LEVEL][row][column]]
-    if tile != 'wall' and tile != 'door':
+    if tile != 'wall' and tile != 'border' and tile != 'door':
         x = column * TILE_SIZE
         y = row * TILE_SIZE
         animate(player, duration=0.1, pos=(x, y))
@@ -81,15 +104,26 @@ def on_key_down(key):
     if tile == 'goal':
         print("Well done")
         LEVEL = LEVEL + 1
-        animate(player, duration=1.0, pos=(64, 64))
+        animate(player, duration=0.001, pos=(64, 64))
         unlock = 0
         if (LEVEL > MAX_LEVEL):
             sounds.winner_chicken_dinner.play()
             time.sleep(3)
         else:
             sounds.win.play()
-
         #exit()
+    if tile == 'goal2':
+        print("Well done")
+        LEVEL = LEVEL + 1
+        animate(player, duration=0.001, pos=(64, 64))
+        unlock = 0
+        if (LEVEL > MAX_LEVEL):
+            sounds.winner_chicken_dinner.play()
+            time.sleep(3)
+        else:
+            sounds.win.play()
+        #exit()
+
     elif tile == 'key':
         unlock = unlock + 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
@@ -98,7 +132,6 @@ def on_key_down(key):
         unlock = unlock - 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
         sounds.thank_you.play()
-
     # enemy movement
     row    = int(enemy.y / TILE_SIZE)
     column = int(enemy.x / TILE_SIZE)
