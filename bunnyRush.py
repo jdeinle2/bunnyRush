@@ -72,7 +72,7 @@ def draw():
                 screen.blit('path', (x, y)) # This draws a path under everything not a path!
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
             if tile=='goal2':
-                screen.blit('obsidian', (x, y)) # This draws a path under everything not a path!
+                screen.blit('obsidian', (x, y)) # draws obsidian under the goal in level 3
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
     player.draw()
     enemy.draw()
