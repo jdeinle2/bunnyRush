@@ -12,6 +12,7 @@ WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
 LEVEL = 1
 MAX_LEVEL = 4
+CHEATMODE = 0
 
 unlock = 0
 
@@ -46,6 +47,8 @@ def on_key_down(key):
     # player movement
     global LEVEL
     global MAX_LEVEL
+    global CHEATMODE
+
     row = int(player.y / TILE_SIZE)
     column = int(player.x / TILE_SIZE)
 
@@ -62,7 +65,11 @@ def on_key_down(key):
         column = column + 1
         player.image = 'player'
 
-    if (cheatcodes.validate(key, MAX_LEVEL)):
+    # Check if secret cheat word is entered, if so, you can skip to any stage you want!
+    if not CHEATMODE:
+        CHEATMODE = cheatcodes.check_secret_word(key)
+
+    if CHEATMODE and (cheatcodes.validate(key, MAX_LEVEL)):
         LEVEL = cheatcodes.validate(key, MAX_LEVEL)
 
     tile = tiles[maze[LEVEL][row][column]]
