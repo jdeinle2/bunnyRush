@@ -47,7 +47,6 @@ def on_key_down(key):
     # player movement
     global LEVEL
     global MAX_LEVEL
-    global CHEATMODE
 
     row = int(player.y / TILE_SIZE)
     column = int(player.x / TILE_SIZE)
@@ -65,12 +64,7 @@ def on_key_down(key):
         column = column + 1
         player.image = 'player'
 
-    # Check if secret cheat word is entered, if so, you can skip to any stage you want!
-    if not CHEATMODE:
-        CHEATMODE = cheatcodes.check_secret_word(key)
-
-    if CHEATMODE and (cheatcodes.validate(key, MAX_LEVEL)):
-        LEVEL = cheatcodes.validate(key, MAX_LEVEL)
+    check_cheatcode(key)
 
     tile = tiles[maze[LEVEL][row][column]]
     if tile != 'wall' and tile!='border' and tile!='bunny' and tile!='castledoor' and tile!='lava':
@@ -177,3 +171,13 @@ def on_key_down(key):
     if LEVEL==4:
         enemy.yv = enemy.yv * 1
         animate(enemy, duration=0.1, pos=(y, x))
+
+def check_cheatcode(key):
+    global CHEATMODE
+    global LEVEL
+    # Check if secret cheat word is entered, if so, you can skip to any stage you want!
+    if not CHEATMODE:
+        CHEATMODE = cheatcodes.check_secret_word(key)
+
+    if CHEATMODE and (cheatcodes.validate(key, MAX_LEVEL)):
+        LEVEL = cheatcodes.validate(key, MAX_LEVEL)
