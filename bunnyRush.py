@@ -1,67 +1,19 @@
 #this is JakeTheHolt - nonoNO this is JUSTIN!
 import time
+import maze
+import cheatcodes
+import re
+
+tiles = maze.tiles
+maze  = maze.maze
 
 TILE_SIZE = 64
 WIDTH = TILE_SIZE * 8
 HEIGHT = TILE_SIZE * 8
-LEVEL = 0
+LEVEL = 1
 MAX_LEVEL = 4
 
-tiles = ['path', 'wall', 'goal', 'bunny', 'carrot', 'obsidian', 'border', 'goal2', 'goal3', 'doorkey', 'castledoor','lava','crackedfloor', 'goal4']
 unlock = 0
-
-maze = [
-[
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 2, 0, 1],
-    [1, 0, 1, 0, 1, 1, 3, 1],
-    [1, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 1, 0, 1, 0, 0, 1],
-    [1, 0, 1, 4, 1, 0, 0, 1],
-    [1, 0, 1, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]
-],
-[
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 2, 0, 1],
-    [1, 0, 1, 0, 1, 1, 3, 1],
-    [1, 0, 1, 0, 0, 0, 0, 1],
-    [1, 1, 1, 0, 1, 4, 0, 1],
-    [1, 1, 1, 0, 1, 0, 0, 1],
-    [1, 1, 1, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]
-],
-[
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 0, 0, 1],
-    [1, 1, 1, 0, 1, 0, 0, 1],
-    [1, 1, 1, 0, 0, 3, 8, 1],
-    [1, 1, 1, 0, 1, 0, 0, 1],
-    [1, 1, 1, 0, 1, 0, 0, 1],
-    [1, 1, 0, 4, 1, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]
-],
-[
-    [6, 6, 6, 6, 6, 6, 6, 6],
-    [6, 5, 5, 5, 6, 6, 7, 6],
-    [6, 6, 6, 5, 9, 6, 10, 6],
-    [6, 6, 6, 5, 6, 6, 5, 6],
-    [6, 6, 6, 5, 6, 6, 5, 6],
-    [6, 6, 6, 5, 6, 6, 5, 6],
-    [6, 6, 6, 5, 5, 5, 5, 6],
-    [6, 6, 6, 6, 6, 6, 6, 6]
-],
-[
-    [6, 6, 6, 6, 6, 6, 6, 6],
-    [6, 12, 12, 12, 12, 12, 12, 6],
-    [6, 12, 12, 12, 12, 12, 12, 6],
-    [6, 12, 12, 12, 12, 12, 12, 6],
-    [6, 12, 12, 12, 12, 12, 13, 6],
-    [6, 12, 12, 12, 12, 12, 12, 6],
-    [6, 12, 12, 12, 12, 12, 12, 6],
-    [6, 6, 6, 6, 6, 6, 6, 6]
-],
-]
 
 player = Actor("player", anchor=(0, 0), pos=(2 * TILE_SIZE, 1 * TILE_SIZE))
 enemy  = Actor("enemy",  anchor=(0, 0), pos=(3 * TILE_SIZE, 6 * TILE_SIZE))
@@ -96,6 +48,7 @@ def on_key_down(key):
     global MAX_LEVEL
     row = int(player.y / TILE_SIZE)
     column = int(player.x / TILE_SIZE)
+
     if key == keys.UP:
         row = row - 1
         player.image = 'player'
@@ -108,6 +61,10 @@ def on_key_down(key):
     if key == keys.RIGHT:
         column = column + 1
         player.image = 'player'
+
+    if (cheatcodes.validate(key, MAX_LEVEL)):
+        LEVEL = cheatcodes.validate(key, MAX_LEVEL)
+
     tile = tiles[maze[LEVEL][row][column]]
     if tile != 'wall' and tile!='border' and tile!='bunny' and tile!='castledoor' and tile!='lava':
         x = column * TILE_SIZE
