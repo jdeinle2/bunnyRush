@@ -7,7 +7,7 @@ HEIGHT = TILE_SIZE * 8
 LEVEL = 0
 MAX_LEVEL = 3
 
-tiles = ['path', 'wall', 'goal', 'door', 'key', 'obsidian', 'border', 'goal2']
+tiles = ['path', 'wall', 'goal', 'door', 'key', 'obsidian', 'border', 'goal2','goal3']
 unlock = 0
 
 maze = [
@@ -33,9 +33,9 @@ maze = [
 ],
 [
     [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 2, 0, 1],
-    [1, 1, 1, 0, 1, 1, 3, 1],
-    [1, 1, 1, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 1],
+    [1, 1, 1, 0, 1, 0, 0, 1],
+    [1, 1, 1, 0, 0, 3, 8, 1],
     [1, 1, 1, 0, 1, 0, 0, 1],
     [1, 1, 1, 0, 1, 0, 0, 1],
     [1, 1, 0, 4, 1, 0, 0, 1],
@@ -50,15 +50,15 @@ maze = [
     [6, 5, 5, 5, 5, 5, 5, 6],
     [6, 5, 5, 5, 5, 5, 5, 6],
     [6, 6, 6, 6, 6, 6, 6, 6]
-]
+],
 ]
 
 player = Actor("player", anchor=(0, 0), pos=(1 * TILE_SIZE, 1 * TILE_SIZE))
 enemy  = Actor("enemy",  anchor=(0, 0), pos=(3 * TILE_SIZE, 6 * TILE_SIZE))
 enemy.yv = -1
 sounds.welcome.play()
-#music.play('background')
-#music.set_volume(0.2)
+music.play('background')
+music.set_volume(0.2)
 
 def draw():
     global LEVEL
@@ -123,6 +123,28 @@ def on_key_down(key):
         else:
             sounds.win.play()
         #exit()
+
+    if tile == 'goal3':
+        sounds.gate.play()
+        time.sleep(4)
+        print("Well done")
+        LEVEL = LEVEL + 1
+        animate(player, duration=0.001, pos=(64, 64))
+        unlock = 0
+        if (LEVEL > MAX_LEVEL):
+            sounds.winner_chicken_dinner.play()
+            time.sleep(3)
+        else:
+            sounds.win.play()
+        #exit()
+
+    if (LEVEL==3):
+        music.play('background')
+        music.set_volume(0.0)
+
+    if (LEVEL==3):
+        music.play('castle')
+        music.set_volume(4)
 
     elif tile == 'key':
         unlock = unlock + 1
