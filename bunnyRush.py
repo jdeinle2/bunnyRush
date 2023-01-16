@@ -7,7 +7,7 @@ HEIGHT = TILE_SIZE * 8
 LEVEL = 0
 MAX_LEVEL = 3
 
-tiles = ['path', 'wall', 'goal', 'door', 'key', 'obsidian', 'border', 'goal2','goal3']
+tiles = ['path', 'wall', 'goal', 'bunny', 'carrot', 'obsidian', 'border', 'goal2', 'goal3', 'doorkey', 'castledoor']
 unlock = 0
 
 maze = [
@@ -43,12 +43,12 @@ maze = [
 ],
 [
     [6, 6, 6, 6, 6, 6, 6, 6],
-    [6, 5, 5, 5, 5, 5, 5, 6],
-    [6, 5, 5, 5, 5, 5, 5, 6],
-    [6, 5, 5, 5, 5, 5, 5, 6],
-    [6, 5, 5, 5, 5, 5, 7, 6],
-    [6, 5, 5, 5, 5, 5, 5, 6],
-    [6, 5, 5, 5, 5, 5, 5, 6],
+    [6, 5, 5, 5, 6, 6, 7, 6],
+    [6, 6, 6, 5, 9, 6, 10, 6],
+    [6, 6, 6, 5, 6, 6, 5, 6],
+    [6, 6, 6, 5, 6, 6, 5, 6],
+    [6, 6, 6, 5, 6, 6, 5, 6],
+    [6, 6, 6, 5, 5, 5, 5, 6],
     [6, 6, 6, 6, 6, 6, 6, 6]
 ],
 ]
@@ -68,10 +68,10 @@ def draw():
             x = column * TILE_SIZE
             y = row * TILE_SIZE
             tile = tiles[maze[LEVEL][row][column]]
-            if tile!='path' or 'goal2':
+            if tile!='path' or tile!='goal2' or tile!='doorkey' or tile!='castledoor':
                 screen.blit('path', (x, y)) # This draws a path under everything not a path!
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
-            if tile=='goal2':
+            if tile=='goal2' or tile=='doorkey' or tile=='castledoor':
                 screen.blit('obsidian', (x, y)) # draws obsidian under the goal in level 3
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
     player.draw()
@@ -96,7 +96,7 @@ def on_key_down(key):
         column = column + 1
         player.image = 'player'
     tile = tiles[maze[LEVEL][row][column]]
-    if tile != 'wall' and tile != 'border' and tile != 'door':
+    if tile != 'wall' and tile!='border' and tile!='bunny' and tile!='castledoor':
         x = column * TILE_SIZE
         y = row * TILE_SIZE
         animate(player, duration=0.1, pos=(x, y))
@@ -127,7 +127,7 @@ def on_key_down(key):
     if tile == 'goal3':
         sounds.gate.play()
         time.sleep(4)
-        print("Well done")
+        print("Be careful in the castle...")
         LEVEL = LEVEL + 1
         animate(player, duration=0.001, pos=(64, 64))
         unlock = 0
@@ -146,20 +146,31 @@ def on_key_down(key):
         music.play('castle')
         music.set_volume(4)
 
-    elif tile == 'key':
+    if tile == 'carrot':
         unlock = unlock + 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
         sounds.yum.play()
-    elif tile == 'door' and unlock > 0:
+
+    if tile == 'bunny' and unlock > 0:
         unlock = unlock - 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
         sounds.thank_you.play()
+
+    if tile == 'doorkey':
+        unlock = unlock + 1
+        maze[LEVEL][row][column] = 5 # 0 is 'path' tile
+        sounds.yum.play()
+
+    if tile == 'castledoor' and unlock > 0:
+        unlock = unlock - 1
+        maze[LEVEL][row][column] = 5 # 0 is 'path' tile
+        sounds.dooropening.play()
     # enemy movement
     row    = int(enemy.y / TILE_SIZE)
     column = int(enemy.x / TILE_SIZE)
     row = row + enemy.yv
     tile = tiles[maze[LEVEL][row][column]]
-    if not tile == 'wall':
+    if tile!='wall' and tile!='border':
         x = column * TILE_SIZE
         y = row * TILE_SIZE
         animate(enemy, duration=0.1, pos=(x, y))
