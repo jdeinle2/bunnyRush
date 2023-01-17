@@ -25,7 +25,7 @@ def check_secret_word(key):
 
 def validate(key,  max_level):
     level = (key.value - 48)
-    print ("Checking key.value", key.value)
+    #print ("Checking key.value", key.value)
     if level > 0 and level <= max_level:
         print ("Super secret code was just entered! Going to level ", level, "max_level:", max_level)
         return level

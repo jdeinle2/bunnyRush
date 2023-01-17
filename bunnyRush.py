@@ -116,9 +116,6 @@ def on_key_down(key):
         animate(player, duration=0.1, pos=(x, y))
     global unlock
 
-    if LEVEL==4:
-        print("Defeat the boss bear!")
-
     if tile == 'goal':
         complete_stage("Well done")
     elif tile == 'goal2':
@@ -130,23 +127,19 @@ def on_key_down(key):
         music.set_volume(100)
     elif tile == 'goal4':
         complete_stage("THE END")
-
-    if tile == 'carrot':
+    elif tile == 'carrot':
         unlock = unlock + 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
         sounds.yum.play()
-
-    if tile == 'bunny' and unlock > 0:
+    elif tile == 'bunny' and unlock > 0:
         unlock = unlock - 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
         sounds.thank_you.play()
-
-    if tile == 'doorkey':
+    elif tile == 'doorkey':
         unlock = unlock + 1
         maze[LEVEL][row][column] = 5 # 0 is 'path' tile
         sounds.yum.play()
-
-    if tile == 'castledoor' and unlock > 0:
+    elif tile == 'castledoor' and unlock > 0:
         unlock = unlock - 1
         maze[LEVEL][row][column] = 5 # 0 is 'path' tile
         sounds.dooropening.play()
@@ -179,23 +172,26 @@ def move_enemy():
     else:
         enemy.yv = enemy.yv * -1
 
-
 def complete_stage(message):
     global LEVEL
-    sounds.gate.play()
-    time.sleep(4)
+    if LEVEL == 2:
+        sounds.gate.play()
+        time.sleep(4)
     print(message)
+    if (LEVEL == MAX_LEVEL):
+        sounds.winner_chicken_dinner.play()
+        time.sleep(3)
+        exit()
+    else:
+        sounds.win.play()
     LEVEL = LEVEL + 1
     animate(player, duration=0.001, pos=(player_start[LEVEL][0], player_start[LEVEL][1]))
     animate(enemy, duration=0.001, pos=(enemy_start[LEVEL][0], enemy_start[LEVEL][1]))
+    if LEVEL==MAX_LEVEL:
+        print("Defeat the boss bear!")
     if enemy not in VISIBLE:
         VISIBLE.append(enemy)
     unlock = 0
-    if (LEVEL > MAX_LEVEL):
-        sounds.winner_chicken_dinner.play()
-        time.sleep(3)
-    else:
-        sounds.win.play()
 
 def throw_projectile():
     if projectile in VISIBLE:
