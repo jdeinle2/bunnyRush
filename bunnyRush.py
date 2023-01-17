@@ -21,7 +21,7 @@ enemy  = Actor("enemy",  anchor=(0, 0), pos=(3 * TILE_SIZE, 6 * TILE_SIZE))
 enemy.yv = -1
 sounds.welcome.play()
 music.play('background')
-music.set_volume(0.2)
+music.set_volume(0.4)
 
 def draw():
     global LEVEL
@@ -125,13 +125,13 @@ def on_key_down(key):
             sounds.win.play()
         #exit()
 
-    if (LEVEL==3):
+    if tile == 'goal3':
         music.play('background')
         music.set_volume(0.0)
 
-    if (LEVEL==3):
+    if tile == 'goal3':
         music.play('castle')
-        music.set_volume(4)
+        music.set_volume(100)
 
     if tile == 'carrot':
         unlock = unlock + 1
