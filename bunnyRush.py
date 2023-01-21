@@ -19,6 +19,8 @@ CHEATMODE = 0
 DIRECTION = [1,0]
 TIMER = 0
 ENEMY_TIMER = -1
+ENEMY_HEALTH = 1
+ENEMY_SPEED = 60 #60 is 1 tile every second!
 PROJECTILE_SPEED = 1.0 # Smaller is faster
 
 unlock = 0
@@ -50,7 +52,8 @@ def draw():
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
             if tile=='goal4':
                 screen.blit('crackedfloor', (x, y)) # draws crackedfloor under the goal in level 4
-            screen.blit(tile, (x, y)) # Draw the tile as the maze intended
+            if not (tile=='goal4' and ENEMY_HEALTH!=0):
+                screen.blit(tile, (x, y)) # Draw the tile as the maze intended
     for character in VISIBLE: # Draw all visible characters
         character.draw()
     screen.draw.text("LEVEL:" + str(LEVEL),[5,0],fontname="sans", fontsize=30) # Print level in upper left corner of screen
@@ -59,25 +62,28 @@ def update(): # Update function is called 60 times a second
     global VISIBLE
     global TIMER
     global ENEMY_TIMER
+    global ENEMY_HEALTH
+    global ENEMY_SPEED
     TIMER = TIMER + 1
 
-    if TIMER%30 == 0: # Every 0.5 seconds, move the enemy
+    if TIMER%ENEMY_SPEED == 0: # Every 0.5 seconds, move the enemy
         move_enemy()
 
     if projectile in VISIBLE: # If projectile is visible, then move it by one space in the direction last perfored
         if projectile.x >= WIDTH or projectile.y >= HEIGHT or projectile.x <= -TILE_SIZE/2.0 or projectile.y <= -TILE_SIZE/2.0:
             VISIBLE.remove(projectile)
         if enemy in VISIBLE and projectile.colliderect(enemy) and ENEMY_TIMER == -1: # Did the projectile collide with the enemy?
-            #VISIBLE.remove(enemy) # Make enemy go away
-            enemy.image = 'enemy_hit'
-            sounds.gotcha.play()  # Play "gotcha" sound
+            ENEMY_HEALTH -= 1
             ENEMY_TIMER = 30 # Initialize enemy removal countdown
+            if (ENEMY_HEALTH == 0):
+                enemy.image = 'enemy_hit'
+            sounds.gotcha.play()  # Play "gotcha" sound
 
     if enemy in VISIBLE:
-        if (ENEMY_TIMER > 0):
+        if (ENEMY_TIMER >= 0):
             ENEMY_TIMER -= 1
             #print("ENEMY_TIMER: ",ENEMY_TIMER)
-        elif (ENEMY_TIMER == 0):
+        elif (ENEMY_TIMER == -1) and (ENEMY_HEALTH == 0):
             VISIBLE.remove(enemy)
         elif enemy.colliderect(player):
             sounds.that_hurt.play()
@@ -114,13 +120,14 @@ def on_key_down(key):
         player.image = 'player'
         DIRECTION = [1,0]
 
-    if key == keys.SPACE: #  If projectile isn't visible, then make it visible and snap it to the same coordinate as the player
-        throw_projectile()
+    if LEVEL == 4 or CHEATMODE == 1:
+        if key == keys.SPACE:
+            throw_projectile()
 
     check_cheatcode(key)
 
     tile = tiles[maze[LEVEL][row][column]]
-    if tile != 'wall' and tile!='border' and tile!='bunny' and tile!='castledoor' and tile!='lava':
+    if tile != 'wall' and tile!='border' and tile!='bunny' and tile!='castledoor' :
         x = column * TILE_SIZE
         y = row * TILE_SIZE
         animate(player, duration=0.1, pos=(x, y))
@@ -134,8 +141,8 @@ def on_key_down(key):
         complete_stage("Be careful in the castle")
         music.stop()
         music.play('castle')
-        music.set_volume(100)
-    elif tile == 'goal4':
+        music.set_volume(0.2)
+    elif tile == 'goal4' and ENEMY_HEALTH==0:
         complete_stage("THE END")
     elif tile == 'carrot':
         unlock = unlock + 1
@@ -185,11 +192,15 @@ def move_enemy():
 def complete_stage(message):
     global LEVEL
     global ENEMY_TIMER
-    if LEVEL == 2:
+    global ENEMY_HEALTH
+    print(message)
+    ENEMY_HEALTH = 1
+    if LEVEL == 2: #Castle Level
         sounds.gate.play()
         time.sleep(4)
-    print(message)
-    if (LEVEL == MAX_LEVEL):
+    elif (LEVEL == MAX_LEVEL-1): #boss level
+        ENEMY_HEALTH = 3
+    elif (LEVEL == MAX_LEVEL):
         sounds.winner_chicken_dinner.play()
         time.sleep(3)
         exit()
