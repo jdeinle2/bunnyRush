@@ -51,11 +51,9 @@ def draw():
             if tile=='goal4':
                 screen.blit('crackedfloor', (x, y)) # draws crackedfloor under the goal in level 4
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
-    for character in VISIBLE:
+    for character in VISIBLE: # Draw all visible characters
         character.draw()
-    #player.draw()
-    #enemy.draw()
-    #projectile.draw()
+    screen.draw.text("LEVEL:" + str(LEVEL),[5,0],fontname="sans", fontsize=30) # Print level in upper left corner of screen
 
 def update(): # Update function is called 60 times a second
     global VISIBLE
