@@ -4,6 +4,7 @@ import maze
 import cheatcodes
 import re
 import random
+import timer
 
 tiles        = maze.tiles
 player_start = maze.player_start
@@ -18,7 +19,7 @@ MAX_LEVEL = 4
 CHEATMODE = 0
 DIRECTION = [1,0]
 TIMER = 0
-ENEMY_TIMER = -1
+PLAYER_HEALTH = 3
 ENEMY_HEALTH = 1
 ENEMY_SPEED = 60 #60 is 1 tile every second!
 PROJECTILE_SPEED = 1.0 # Smaller is faster
@@ -28,6 +29,11 @@ unlock = 0
 player = Actor("player", anchor=(0, 0), pos=(player_start[LEVEL][0], player_start[LEVEL][1]))
 enemy  = Actor("enemy",  anchor=(0, 0), pos=(enemy_start[LEVEL][0], enemy_start[LEVEL][1]))
 projectile = Actor("projectile", anchor=(32, 32), pos=(2 * TILE_SIZE, 1 * TILE_SIZE))
+
+# Declare Game Timers
+enemy_hit_timer  = timer.timer(enemy,  60)  # Create a timer which is only active when the enemy is visible
+player_hit_timer = timer.timer(player, 60) # Create a timer which is only active when the player is visible
+timers = [enemy_hit_timer, player_hit_timer]
 
 VISIBLE = [player, enemy]
 
@@ -56,15 +62,17 @@ def draw():
                 screen.blit(tile, (x, y)) # Draw the tile as the maze intended
     for character in VISIBLE: # Draw all visible characters
         character.draw()
-    screen.draw.text("LEVEL:" + str(LEVEL),[5,0],fontname="sans", fontsize=30) # Print level in upper left corner of screen
+    screen.draw.text("LEVEL:" + str(LEVEL) + " HEALTH:" + str(PLAYER_HEALTH),[5,0],fontname="sans", fontsize=30) # Print level in upper left corner of screen
 
 def update(): # Update function is called 60 times a second
     global VISIBLE
     global TIMER
-    global ENEMY_TIMER
     global ENEMY_HEALTH
     global ENEMY_SPEED
+    global PLAYER_HEALTH
     TIMER = TIMER + 1
+
+    advance_timers() # Function to advance all active timers
 
     if TIMER%ENEMY_SPEED == 0: # Every 0.5 seconds, move the enemy
         move_enemy()
@@ -72,24 +80,23 @@ def update(): # Update function is called 60 times a second
     if projectile in VISIBLE: # If projectile is visible, then move it by one space in the direction last perfored
         if projectile.x >= WIDTH or projectile.y >= HEIGHT or projectile.x <= -TILE_SIZE/2.0 or projectile.y <= -TILE_SIZE/2.0:
             VISIBLE.remove(projectile)
-        if enemy in VISIBLE and projectile.colliderect(enemy) and ENEMY_TIMER == -1: # Did the projectile collide with the enemy?
+        if enemy in VISIBLE and projectile.colliderect(enemy) and not enemy_hit_timer.is_active(): # Did the projectile collide with the enemy?
             ENEMY_HEALTH -= 1
-            ENEMY_TIMER = 30 # Initialize enemy removal countdown
+            enemy_hit_timer.start() # start the timer for the enemy
             if (ENEMY_HEALTH == 0):
                 enemy.image = 'enemy_hit'
             sounds.gotcha.play()  # Play "gotcha" sound
 
     if enemy in VISIBLE:
-        if (ENEMY_TIMER >= 0):
-            ENEMY_TIMER -= 1
-            #print("ENEMY_TIMER: ",ENEMY_TIMER)
-        elif (ENEMY_TIMER == -1) and (ENEMY_HEALTH == 0):
+        if (enemy_hit_timer.is_expired() and (ENEMY_HEALTH == 0)): # Only after the timer has expired, and health is 0, remove the enemy
             VISIBLE.remove(enemy)
-        elif enemy.colliderect(player):
+        elif enemy.colliderect(player) and not player_hit_timer.is_active(): # Cannot get hit again if the player hit timer is active
+            PLAYER_HEALTH -= 1
             sounds.that_hurt.play()
-            time.sleep(2)
-            print("You died")
-            exit()
+            player_hit_timer.start()
+            print ("YOU GOT HIT!!" + " HEALTH:", PLAYER_HEALTH )
+            if (PLAYER_HEALTH == -4):
+                game_exit("YOU DIED!")
 
 
 def on_key_down(key):
@@ -163,7 +170,7 @@ def on_key_down(key):
 
 # enemy movement
 def move_enemy():
-    if enemy not in VISIBLE or ENEMY_TIMER != -1:
+    if enemy not in VISIBLE or enemy_hit_timer.is_active():
         return # Return from function if enemy is no longer visible
     x = enemy.x
     y = enemy.y
@@ -191,7 +198,6 @@ def move_enemy():
 
 def complete_stage(message):
     global LEVEL
-    global ENEMY_TIMER
     global ENEMY_HEALTH
     print(message)
     ENEMY_HEALTH = 1
@@ -202,8 +208,8 @@ def complete_stage(message):
         ENEMY_HEALTH = 3
     elif (LEVEL == MAX_LEVEL):
         sounds.winner_chicken_dinner.play()
-        time.sleep(3)
-        exit()
+        game_exit("YOU WIN!")
+
     else:
         sounds.win.play()
     LEVEL = LEVEL + 1
@@ -212,7 +218,7 @@ def complete_stage(message):
     if enemy not in VISIBLE: # Reinitialize enemy if it was killed
         VISIBLE.append(enemy)
         enemy.image = 'enemy'
-        ENEMY_TIMER = -1
+        enemy_hit_timer.reset()
     animate(player, duration=0.001, pos=(player_start[LEVEL][0], player_start[LEVEL][1]))
     animate(enemy, duration=0.001, pos=(enemy_start[LEVEL][0], enemy_start[LEVEL][1]))
     unlock = 0
@@ -246,6 +252,13 @@ def throw_projectile():
     animate(projectile, duration=(duration), pos=(x, y))
     sounds.throw.play()
 
+# Advance all of the timers, but only if their actors are visible and they are active
+def advance_timers():
+    for t in timers:
+        #print ("name:" + t.actor.image + " count:", t.count, " visible:", t.actor in VISIBLE," active:", t.is_active())
+        if (t.actor in VISIBLE) and t.is_active():
+            t.advance()
+
 def check_cheatcode(key):
     global CHEATMODE
     global LEVEL
@@ -255,3 +268,8 @@ def check_cheatcode(key):
     if CHEATMODE and (cheatcodes.validate(key, MAX_LEVEL)):
         LEVEL = cheatcodes.validate(key, MAX_LEVEL) - 1
         complete_stage("CHEATER CHEATER!!!")
+
+def game_exit(message):
+    print (message)
+    time.sleep(2)
+    exit()
