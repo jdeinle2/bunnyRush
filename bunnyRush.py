@@ -67,8 +67,9 @@ def update(): # Update function is called 60 times a second
     if projectile in VISIBLE: # If projectile is visible, then move it by one space in the direction last perfored
         if projectile.x >= WIDTH or projectile.y >= HEIGHT or projectile.x <= -TILE_SIZE/2.0 or projectile.y <= -TILE_SIZE/2.0:
             VISIBLE.remove(projectile)
-        if enemy in VISIBLE and projectile.colliderect(enemy):
-            VISIBLE.remove(enemy)
+        if enemy in VISIBLE and projectile.colliderect(enemy): # Did the projectile collide with the enemy?
+            VISIBLE.remove(enemy) # Make enemy go away
+            sounds.gotcha.play()  # Play "gotcha" sound
 
     if enemy in VISIBLE and enemy.colliderect(player): # Check for player/enemy collision
         sounds.that_hurt.play()
@@ -220,6 +221,7 @@ def throw_projectile():
         y = projectile.y
         duration = ((WIDTH-player.x) / WIDTH) * PROJECTILE_SPEED
     animate(projectile, duration=(duration), pos=(x, y))
+    sounds.throw.play()
 
 def check_cheatcode(key):
     global CHEATMODE
