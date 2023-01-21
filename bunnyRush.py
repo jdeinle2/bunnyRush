@@ -77,6 +77,10 @@ def update(): # Update function is called 60 times a second
             ENEMY_TIMER = 30 # Initialize enemy removal countdown
             if (ENEMY_HEALTH == 0):
                 enemy.image = 'enemy_hit'
+            if (ENEMY_HEALTH == 2):
+                enemy.image = 'enemy_hurt'
+            if (ENEMY_HEALTH == 1):
+                enemy.image = 'enemy_hurt2'
             sounds.gotcha.play()  # Play "gotcha" sound
 
     if enemy in VISIBLE:
@@ -105,11 +109,11 @@ def on_key_down(key):
 
     if key == keys.UP:
         row = row - 1
-        player.image = 'player'
+        player.image = 'playerup'
         DIRECTION = [0,-1]
     if key == keys.DOWN:
         row = row + 1
-        player.image = 'player'
+        player.image = 'playerdown'
         DIRECTION = [0,1]
     if key == keys.LEFT:
         column = column - 1
@@ -120,9 +124,9 @@ def on_key_down(key):
         player.image = 'player'
         DIRECTION = [1,0]
 
-    if LEVEL == 4 or CHEATMODE == 1:
-        if key == keys.SPACE:
-            throw_projectile()
+    #if LEVEL == 4 or CHEATMODE == 1: #only throw if level is 4
+    if key == keys.SPACE:
+        throw_projectile()
 
     check_cheatcode(key)
 
