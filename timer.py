@@ -1,4 +1,5 @@
-# Write your code here :-)
+# timer class, makes managing a bunch of game timers much easier
+# A timer can be started, stopped, and checked for current status
 class timer:
     def __init__(self, actor, count):
         self.actor = actor
