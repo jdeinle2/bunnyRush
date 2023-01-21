@@ -99,7 +99,7 @@ def update(): # Update function is called 60 times a second
             sounds.that_hurt.play()
             player_hit_timer.start()
             print ("YOU GOT HIT!!" + " HEALTH:", PLAYER_HEALTH )
-            if (PLAYER_HEALTH == -4):
+            if (PLAYER_HEALTH == 0):
                 game_exit("YOU DIED!")
 
 
