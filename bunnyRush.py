@@ -18,6 +18,7 @@ MAX_LEVEL = 4
 CHEATMODE = 0
 DIRECTION = [1,0]
 TIMER = 0
+ENEMY_TIMER = -1
 PROJECTILE_SPEED = 1.0 # Smaller is faster
 
 unlock = 0
@@ -59,6 +60,7 @@ def draw():
 def update(): # Update function is called 60 times a second
     global VISIBLE
     global TIMER
+    global ENEMY_TIMER
     TIMER = TIMER + 1
 
     if TIMER%30 == 0: # Every 0.5 seconds, move the enemy
@@ -67,15 +69,24 @@ def update(): # Update function is called 60 times a second
     if projectile in VISIBLE: # If projectile is visible, then move it by one space in the direction last perfored
         if projectile.x >= WIDTH or projectile.y >= HEIGHT or projectile.x <= -TILE_SIZE/2.0 or projectile.y <= -TILE_SIZE/2.0:
             VISIBLE.remove(projectile)
-        if enemy in VISIBLE and projectile.colliderect(enemy): # Did the projectile collide with the enemy?
-            VISIBLE.remove(enemy) # Make enemy go away
+        if enemy in VISIBLE and projectile.colliderect(enemy) and ENEMY_TIMER == -1: # Did the projectile collide with the enemy?
+            #VISIBLE.remove(enemy) # Make enemy go away
+            enemy.image = 'enemy_hit'
             sounds.gotcha.play()  # Play "gotcha" sound
+            ENEMY_TIMER = 30 # Initialize enemy removal countdown
 
-    if enemy in VISIBLE and enemy.colliderect(player): # Check for player/enemy collision
-        sounds.that_hurt.play()
-        time.sleep(2)
-        print("You died")
-        exit()
+    if enemy in VISIBLE:
+        if (ENEMY_TIMER > 0):
+            ENEMY_TIMER -= 1
+            #print("ENEMY_TIMER: ",ENEMY_TIMER)
+        elif (ENEMY_TIMER == 0):
+            VISIBLE.remove(enemy)
+        elif enemy.colliderect(player):
+            sounds.that_hurt.play()
+            time.sleep(2)
+            print("You died")
+            exit()
+
 
 def on_key_down(key):
     # player movement
@@ -147,7 +158,7 @@ def on_key_down(key):
 
 # enemy movement
 def move_enemy():
-    if enemy not in VISIBLE:
+    if enemy not in VISIBLE or ENEMY_TIMER != -1:
         return # Return from function if enemy is no longer visible
     x = enemy.x
     y = enemy.y
@@ -175,6 +186,7 @@ def move_enemy():
 
 def complete_stage(message):
     global LEVEL
+    global ENEMY_TIMER
     if LEVEL == 2:
         sounds.gate.play()
         time.sleep(4)
@@ -186,12 +198,14 @@ def complete_stage(message):
     else:
         sounds.win.play()
     LEVEL = LEVEL + 1
-    animate(player, duration=0.001, pos=(player_start[LEVEL][0], player_start[LEVEL][1]))
-    animate(enemy, duration=0.001, pos=(enemy_start[LEVEL][0], enemy_start[LEVEL][1]))
     if LEVEL==MAX_LEVEL:
         print("Defeat the boss bear!")
-    if enemy not in VISIBLE:
+    if enemy not in VISIBLE: # Reinitialize enemy if it was killed
         VISIBLE.append(enemy)
+        enemy.image = 'enemy'
+        ENEMY_TIMER = -1
+    animate(player, duration=0.001, pos=(player_start[LEVEL][0], player_start[LEVEL][1]))
+    animate(enemy, duration=0.001, pos=(enemy_start[LEVEL][0], enemy_start[LEVEL][1]))
     unlock = 0
 
 def throw_projectile():
