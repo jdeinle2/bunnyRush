@@ -19,7 +19,7 @@ MAX_LEVEL = 4
 CHEATMODE = 0
 DIRECTION = [1,0]
 TIMER = 0
-PLAYER_HEALTH = 3
+PLAYER_HEALTH = 1
 ENEMY_HEALTH = 1
 ENEMY_SPEED = 60 #60 is 1 tile every second!
 PROJECTILE_SPEED = 1.0 # Smaller is faster
@@ -53,7 +53,7 @@ def draw():
             if tile!='path' or tile!='goal2' or tile!='doorkey' or tile!='castledoor' or tile!='goal4':
                 screen.blit('path', (x, y)) # This draws a path under everything not a path!
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
-            if tile=='goal2' or tile=='doorkey' or tile=='castledoor':
+            if tile=='goal2' or tile=='doorkey' or tile=='castledoor' or tile=='goldencarrot':
                 screen.blit('obsidian', (x, y)) # draws obsidian under the goal in level 3
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
             if tile=='goal4':
@@ -62,8 +62,16 @@ def draw():
                 screen.blit(tile, (x, y)) # Draw the tile as the maze intended
     for character in VISIBLE: # Draw all visible characters
         character.draw()
-    screen.draw.text("LEVEL:" + str(LEVEL) + " HEALTH:" + str(PLAYER_HEALTH),[5,0],fontname="sans", fontsize=30) # Print level in upper left corner of screen
-
+    screen.draw.text("LEVEL:" + str(LEVEL),[5,0],fontname="sans", fontsize=30) # Print level in upper left corner of screen
+    if (PLAYER_HEALTH==1):
+        screen.blit('health1', (130, 1))
+    if (PLAYER_HEALTH==2):
+        screen.blit('health1', (130, 1))
+        screen.blit('health2', (200, 1))
+    if (PLAYER_HEALTH==3):
+        screen.blit('health1', (130, 1))
+        screen.blit('health2', (200, 1))
+        screen.blit('health3', (270, 1))
 def update(): # Update function is called 60 times a second
     global VISIBLE
     global TIMER
@@ -94,7 +102,7 @@ def update(): # Update function is called 60 times a second
     if enemy in VISIBLE:
         if (enemy_hit_timer.is_expired() and (ENEMY_HEALTH == 0)): # Only after the timer has expired, and health is 0, remove the enemy
             VISIBLE.remove(enemy)
-        elif enemy.colliderect(player) and not player_hit_timer.is_active(): # Cannot get hit again if the player hit timer is active
+        elif enemy.colliderect(player) and not player_hit_timer.is_active() and not enemy_hit_timer.is_active(): # Cannot get hit again if the player hit timer is active
             PLAYER_HEALTH -= 1
             sounds.that_hurt.play()
             player_hit_timer.start()
@@ -143,6 +151,7 @@ def on_key_down(key):
         y = row * TILE_SIZE
         animate(player, duration=0.1, pos=(x, y))
     global unlock
+    global PLAYER_HEALTH
 
     if tile == 'goal':
         complete_stage("Well done")
@@ -159,6 +168,10 @@ def on_key_down(key):
         unlock = unlock + 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
         sounds.yum.play()
+    elif tile == 'goldencarrot':
+        PLAYER_HEALTH+=2
+        sounds.yum.play()
+        maze[LEVEL][row][column] = 5 # 5 is 'obsidian' tile
     elif tile == 'bunny' and unlock > 0:
         unlock = unlock - 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
@@ -203,6 +216,7 @@ def move_enemy():
 def complete_stage(message):
     global LEVEL
     global ENEMY_HEALTH
+    global PLAYER_HEALTH
     print(message)
     ENEMY_HEALTH = 1
     if LEVEL == 2: #Castle Level
