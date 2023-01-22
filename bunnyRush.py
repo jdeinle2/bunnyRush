@@ -139,8 +139,8 @@ def on_key_down(key):
         player.image = 'player'
         DIRECTION = [1,0]
 
-    #if LEVEL == 4 or CHEATMODE == 1: #only throw if level is 4
-    if key == keys.SPACE:
+    if LEVEL == 4 or CHEATMODE == 1: #only throw if level is 4
+        if key == keys.SPACE:
         throw_projectile()
 
     check_cheatcode(key)
