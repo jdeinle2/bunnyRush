@@ -21,7 +21,7 @@ DIRECTION = [1,0]
 TIMER = 0
 PLAYER_HEALTH = 1
 ENEMY_HEALTH = 1
-ENEMY_SPEED = 60 #60 is 1 tile every second!
+ENEMY_SPEED = 30 #60 is 1 tile every second!
 PROJECTILE_SPEED = 1.0 # Smaller is faster
 
 unlock = 0
