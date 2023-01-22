@@ -72,6 +72,8 @@ def draw():
         screen.blit('health1', (130, 1))
         screen.blit('health2', (200, 1))
         screen.blit('health3', (270, 1))
+    if CHEATMODE == 1:
+        screen.draw.text("CHEAT MODE ON", [150,0],fontname="sans", fontsize=30, color="darkred")
 def update(): # Update function is called 60 times a second
     global VISIBLE
     global TIMER
@@ -109,7 +111,6 @@ def update(): # Update function is called 60 times a second
             print ("YOU GOT HIT!!" + " HEALTH:", PLAYER_HEALTH )
             if (PLAYER_HEALTH == 0):
                 game_exit("YOU DIED!")
-
 
 def on_key_down(key):
     # player movement
@@ -185,6 +186,8 @@ def on_key_down(key):
         maze[LEVEL][row][column] = 5 # 0 is 'path' tile
         sounds.dooropening.play()
 
+    if CHEATMODE == 1:
+        PLAYER_HEALTH = 100
 # enemy movement
 def move_enemy():
     if enemy not in VISIBLE or enemy_hit_timer.is_active():
