@@ -1,6 +1,6 @@
 # maze library
 
-tiles = ['path', 'wall', 'goal', 'bunny', 'carrot', 'obsidian', 'border', 'goal2', 'goal3', 'doorkey', 'castledoor','goldencarrot','crackedfloor', 'goal4']
+tiles = ['path', 'wall', 'goal', 'bunny', 'carrot', 'obsidian', 'border', 'goal2', 'goal3', 'doorkey', 'castledoor','goldencarrot','crackedfloor', 'goal4', 'pile_of_carrots']
 
 player_start = [[0,0],[128,64],[128,64],[128,64],[128,64]]
 enemy_start  = [[0,0],[192,384],[192,384],[192,384],[192,384]]
@@ -24,7 +24,7 @@ maze = [
     [1, 1, 1, 0, 0, 3, 8, 1],
     [1, 1, 1, 0, 1, 0, 0, 1],
     [1, 1, 1, 0, 1, 0, 0, 1],
-    [1, 1, 0, 4, 1, 0, 0, 1],
+    [1, 1, 0, 4, 1, 0, 11, 1],
     [1, 1, 1, 1, 1, 1, 1, 1]
 ],
 [
@@ -33,7 +33,7 @@ maze = [
     [6, 6, 6, 5, 9, 6, 10, 6],
     [6, 6, 6, 5, 6, 6, 5, 6],
     [6, 6, 6, 5, 6, 6, 5, 6],
-    [6, 6, 6, 5, 6, 6, 11, 6],
+    [6, 6, 6, 5, 6, 6, 14, 6],
     [6, 6, 6, 5, 5, 5, 5, 6],
     [6, 6, 6, 6, 6, 6, 6, 6]
 ],

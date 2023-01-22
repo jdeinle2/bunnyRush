@@ -17,6 +17,7 @@ HEIGHT = TILE_SIZE * 8
 LEVEL = 1
 MAX_LEVEL = 4
 CHEATMODE = 0
+ATTACKMODE = 0
 DIRECTION = [1,0]
 TIMER = 0
 PLAYER_HEALTH = 1
@@ -53,7 +54,7 @@ def draw():
             if tile!='path' or tile!='goal2' or tile!='doorkey' or tile!='castledoor' or tile!='goal4':
                 screen.blit('path', (x, y)) # This draws a path under everything not a path!
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
-            if tile=='goal2' or tile=='doorkey' or tile=='castledoor' or tile=='goldencarrot':
+            if tile=='goal2' or tile=='doorkey' or tile=='castledoor' or tile=='pile_of_carrots':
                 screen.blit('obsidian', (x, y)) # draws obsidian under the goal in level 3
             screen.blit(tile, (x, y)) # Draw the tile as the maze intended
             if tile=='goal4':
@@ -110,7 +111,7 @@ def update(): # Update function is called 60 times a second
             VISIBLE.remove(enemy)
         elif enemy.colliderect(player) and not player_hit_timer.is_active() and not enemy_hit_timer.is_active(): # Cannot get hit again if the player hit timer is active
             PLAYER_HEALTH -= 1
-            if not CHEATMODE:
+            if (CHEATMODE!=1):
                 sounds.that_hurt.play()
             player_hit_timer.start()
             print ("YOU GOT HIT!!" + " HEALTH:", PLAYER_HEALTH )
@@ -124,7 +125,8 @@ def on_key_down(key):
     global DIRECTION
     global PROJECTILE_DIRECTION
     global VISIBLE
-
+    global ATTACKMODE
+    global CHEATMODE
     row = int(player.y / TILE_SIZE)
     column = int(player.x / TILE_SIZE)
 
@@ -145,10 +147,6 @@ def on_key_down(key):
         player.image = 'player'
         DIRECTION = [1,0]
 
-    #if LEVEL == 4 or CHEATMODE == 1: #only throw if level is 4
-    if key == keys.SPACE:
-        throw_projectile()
-
     check_cheatcode(key)
 
     tile = tiles[maze[LEVEL][row][column]]
@@ -158,6 +156,10 @@ def on_key_down(key):
         animate(player, duration=0.1, pos=(x, y))
     global unlock
     global PLAYER_HEALTH
+
+    if CHEATMODE == 1 or ATTACKMODE == 1: #only throw if cheatmode is on
+        if key == keys.SPACE:
+            throw_projectile()
 
     if tile == 'goal':
         complete_stage("Well done")
@@ -179,6 +181,10 @@ def on_key_down(key):
         sounds.grab.play()
     elif tile == 'goldencarrot':
         PLAYER_HEALTH+=2
+        sounds.yum.play()
+        maze[LEVEL][row][column] = 0 # 5 is 'obsidian' tile
+    elif tile == 'pile_of_carrots':
+        ATTACKMODE =1
         sounds.yum.play()
         maze[LEVEL][row][column] = 5 # 5 is 'obsidian' tile
     elif tile == 'bunny' and unlock > 0:
