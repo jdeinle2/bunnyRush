@@ -64,16 +64,16 @@ def draw():
         character.draw()
     screen.draw.text("LEVEL:" + str(LEVEL),[5,0],fontname="sans", fontsize=30) # Print level in upper left corner of screen
     if (PLAYER_HEALTH==1):
-        screen.blit('health1', (130, 1))
+        screen.blit('health1', (128, 1))
     if (PLAYER_HEALTH==2):
-        screen.blit('health1', (130, 1))
-        screen.blit('health2', (200, 1))
+        screen.blit('health1', (128, 1))
+        screen.blit('health2', (192, 1))
     if (PLAYER_HEALTH==3):
-        screen.blit('health1', (130, 1))
-        screen.blit('health2', (200, 1))
-        screen.blit('health3', (270, 1))
+        screen.blit('health1', (128, 1))
+        screen.blit('health2', (192, 1))
+        screen.blit('health3', (256, 1))
     if CHEATMODE == 1:
-        screen.draw.text("CHEAT MODE ON", [150,0],fontname="sans", fontsize=30, color="darkred")
+        screen.draw.text("CHEAT MODE: ON", [150,0],fontname="sans", fontsize=30, color="darkred")
 def update(): # Update function is called 60 times a second
     global VISIBLE
     global TIMER
@@ -95,10 +95,14 @@ def update(): # Update function is called 60 times a second
             enemy_hit_timer.start() # start the timer for the enemy
             if (ENEMY_HEALTH == 0):
                 enemy.image = 'enemy_hit'
-            if (ENEMY_HEALTH == 2):
+            if (ENEMY_HEALTH == 4):
                 enemy.image = 'enemy_hurt'
-            if (ENEMY_HEALTH == 1):
+            if (ENEMY_HEALTH == 3):
                 enemy.image = 'enemy_hurt2'
+            if (ENEMY_HEALTH == 2):
+                enemy.image = 'enemy_hurt3'
+            if (ENEMY_HEALTH == 1):
+                enemy.image = 'enemy_hurt4'
             sounds.gotcha.play()  # Play "gotcha" sound
 
     if enemy in VISIBLE:
@@ -106,7 +110,8 @@ def update(): # Update function is called 60 times a second
             VISIBLE.remove(enemy)
         elif enemy.colliderect(player) and not player_hit_timer.is_active() and not enemy_hit_timer.is_active(): # Cannot get hit again if the player hit timer is active
             PLAYER_HEALTH -= 1
-            sounds.that_hurt.play()
+            if not CHEATMODE:
+                sounds.that_hurt.play()
             player_hit_timer.start()
             print ("YOU GOT HIT!!" + " HEALTH:", PLAYER_HEALTH )
             if (PLAYER_HEALTH == 0):
@@ -157,18 +162,21 @@ def on_key_down(key):
     if tile == 'goal':
         complete_stage("Well done")
     elif tile == 'goal2':
-        complete_stage("Well done")
+        music.stop()
+        music.play('boss')
+        music.set_volume(0.5)
+        complete_stage("Defeat tne boss!")
     elif tile == 'goal3':
         complete_stage("Be careful in the castle")
         music.stop()
         music.play('castle')
-        music.set_volume(0.2)
+        music.set_volume(0.5)
     elif tile == 'goal4' and ENEMY_HEALTH==0:
         complete_stage("THE END")
     elif tile == 'carrot':
         unlock = unlock + 1
         maze[LEVEL][row][column] = 0 # 0 is 'path' tile
-        sounds.yum.play()
+        sounds.grab.play()
     elif tile == 'goldencarrot':
         PLAYER_HEALTH+=2
         sounds.yum.play()
@@ -180,7 +188,7 @@ def on_key_down(key):
     elif tile == 'doorkey':
         unlock = unlock + 1
         maze[LEVEL][row][column] = 5 # 0 is 'path' tile
-        sounds.yum.play()
+        sounds.grab.play()
     elif tile == 'castledoor' and unlock > 0:
         unlock = unlock - 1
         maze[LEVEL][row][column] = 5 # 0 is 'path' tile
@@ -226,7 +234,7 @@ def complete_stage(message):
         sounds.gate.play()
         time.sleep(4)
     elif (LEVEL == MAX_LEVEL-1): #boss level
-        ENEMY_HEALTH = 3
+        ENEMY_HEALTH = 5
     elif (LEVEL == MAX_LEVEL):
         sounds.winner_chicken_dinner.play()
         game_exit("YOU WIN!")
