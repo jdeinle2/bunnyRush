@@ -141,7 +141,7 @@ def on_key_down(key):
 
     if LEVEL == 4 or CHEATMODE == 1: #only throw if level is 4
         if key == keys.SPACE:
-        throw_projectile()
+            throw_projectile()
 
     check_cheatcode(key)
 
