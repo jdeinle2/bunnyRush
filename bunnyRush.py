@@ -79,8 +79,8 @@ def draw():
         enemy.image = 'enemy'
         if (ENEMY_HEALTH == 0):
                 enemy.image = 'enemy_hit'
-    if LEVEL == 2:
-        enemy.image = 'zombie' #Turns enemy in level 2 to cyra's zombie
+    #if LEVEL == 2:
+    #    enemy.image = 'zombie' #Turns enemy in level 2 to cyra's zombie
 def update(): # Update function is called 60 times a second
     global VISIBLE
     global TIMER
@@ -117,7 +117,7 @@ def update(): # Update function is called 60 times a second
             VISIBLE.remove(enemy)
         elif enemy.colliderect(player) and not player_hit_timer.is_active() and not enemy_hit_timer.is_active(): # Cannot get hit again if the player hit timer is active
             PLAYER_HEALTH -= 1
-            if (CHEATMODE!=1 and LEVEL!=2): #removes "that hurt" sound when in level 2 and when using cheatmode
+            if (CHEATMODE!=1): #removes "that hurt" sound when in level 2 and when using cheatmode
                 sounds.that_hurt.play()
             player_hit_timer.start()
             print ("YOU GOT HIT!!" + " HEALTH:", PLAYER_HEALTH )
